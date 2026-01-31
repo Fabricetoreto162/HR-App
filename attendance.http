@@ -1,0 +1,46 @@
+### Ajouter employé
+POST http://127.0.0.1:8000/api/employees/
+Content-Type: application/json
+
+{
+  "full_name": "Fabrice TOWANOU",
+  "position": "Développeur",
+  "work_start_time": "08:00:00",
+  "work_end_time": "23:30:00",
+  "biometric_id": "BIO_123456",
+  "is_active": true
+}
+
+###
+
+### Lister employés
+GET http://127.0.0.1:8000/api/employees/
+
+###
+
+### Check-in
+POST http://127.0.0.1:8000/api/attendance/check-in/
+Content-Type: application/json
+
+{
+  "employee_id": 1,
+  "biometric_id": "BIO_123456"
+   
+}
+
+###
+
+### Check-out
+POST http://127.0.0.1:8000/api/attendance/check-out/
+Content-Type: application/json
+
+{
+  "employee_id": 1,
+  "biometric_id": "BIO_123456"
+   
+}
+
+###  Supprimer
+
+DELETE http://127.0.0.1:8000/api/employees/1/
+###deactivate
