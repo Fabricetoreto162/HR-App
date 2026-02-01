@@ -1,5 +1,5 @@
 ### Ajouter employé (génère automatiquement un unique_code et QR code)
-POST http://127.0.0.1:8000/api/employees/
+POST https://backendhrapp.pythonanywhere.com/api/employees/
 Content-Type: application/json
 
 {
@@ -13,12 +13,12 @@ Content-Type: application/json
 ###
 
 ### Lister tous les employés
-GET http://127.0.0.1:8000/api/employees/
+GET https://backendhrapp.pythonanywhere.com/api/employees/
 
 ###
 
 ### Check-in via QR code / unique_code
-POST http://127.0.0.1:8000/api/attendance/check-in/
+POST https://backendhrapp.pythonanywhere.com/api/attendance/check-in/
 Content-Type: application/json
 
 {
@@ -28,7 +28,7 @@ Content-Type: application/json
 ###
 
 ### Check-out via QR code / unique_code
-POST http://127.0.0.1:8000/api/attendance/check-out/
+POST https://backendhrapp.pythonanywhere.com/api/attendance/check-out/
 Content-Type: application/json
 
 {
@@ -38,12 +38,12 @@ Content-Type: application/json
 ###
 
 ### Supprimer un employé
-DELETE http://127.0.0.1:8000/api/employees/1/
+DELETE https://backendhrapp.pythonanywhere.com/api/employees/2/
 
 ###
 
 ### Désactiver un employé
-PATCH http://127.0.0.1:8000/api/employees/1/
+PATCH https://backendhrapp.pythonanywhere.com/api/employees/1/
 Content-Type: application/json
 
 {

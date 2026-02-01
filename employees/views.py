@@ -6,10 +6,9 @@ class EmployeeListCreateView(generics.ListCreateAPIView):
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
 
-    # Optionnel : redéfinir create pour forcer la génération QR si besoin
+    # Force la génération du QR code si nécessaire
     def perform_create(self, serializer):
         employee = serializer.save()
-        # Le QR code est déjà généré dans le save() du modèle
         return employee
 
 

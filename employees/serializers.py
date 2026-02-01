@@ -7,13 +7,22 @@ class EmployeeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Employee
         fields = [
-            'id', 'full_name', 'position', 'work_start_time',
-            'work_end_time',  'is_active',
-            'unique_code', 'qr_code_url'
+            'id',
+            'full_name',
+            'position',
+            'work_start_time',
+            'work_end_time',
+            'is_active',
+            'unique_code',
+            'qr_code_url'
         ]
 
     def get_qr_code_url(self, obj):
         if obj.qr_code:
             request = self.context.get('request')
-            return request.build_absolute_uri(obj.qr_code.url)
+            # Si request est fourni, on construit une URL absolue
+            if request:
+                return request.build_absolute_uri(obj.qr_code.url)
+            # Sinon URL relative
+            return obj.qr_code.url
         return None

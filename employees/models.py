@@ -1,7 +1,6 @@
 from django.db import models
 from datetime import time
 import uuid
-from django.core.files import File
 from io import BytesIO
 import qrcode
 from django.core.files.base import ContentFile
@@ -13,12 +12,16 @@ class Employee(models.Model):
     work_end_time = models.TimeField()
     is_active = models.BooleanField(default=True)
 
-    # Nouveau champ pour QR code / identification unique
+    # Identification unique + QR code
     unique_code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     qr_code = models.ImageField(upload_to='qr_codes/', blank=True, null=True)
 
     def save(self, *args, **kwargs):
-        # Générer le QR code automatiquement si non existant
+        # Sauvegarder d'abord pour obtenir un ID si nouveau
+        if not self.id:
+            super().save(*args, **kwargs)
+
+        # Générer le QR code si non existant
         if not self.qr_code:
             qr = qrcode.QRCode(
                 version=1,
@@ -27,12 +30,14 @@ class Employee(models.Model):
             )
             qr.add_data(str(self.unique_code))
             qr.make(fit=True)
-            img = qr.make_image(fill='black', back_color='white')
+            img = qr.make_image(fill_color='black', back_color='white')
 
             buffer = BytesIO()
             img.save(buffer, format='PNG')
-            file_name = f"{self.full_name}_{self.id}.png"
+            # On utilise l'ID pour éviter None et caractères spéciaux
+            file_name = f"{self.full_name.replace(' ', '_')}_{self.id}.png"
             self.qr_code.save(file_name, ContentFile(buffer.getvalue()), save=False)
+
         super().save(*args, **kwargs)
 
     def str(self):
