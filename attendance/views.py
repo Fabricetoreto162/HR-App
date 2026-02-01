@@ -1,24 +1,25 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.utils import timezone
-from datetime import datetime, time, timedelta
+from django.utils import timezone 
+from datetime import timedelta, datetime
 
 from .models import Attendance
 from .serializers import AttendanceSerializer
 from employees.models import Employee
 
+
 class CheckInView(APIView):
     def post(self, request):
-        biometric_id = request.data.get("biometric_id")
+        code = request.data.get("unique_code")  # <-- On reçoit le QR/UUID
 
         try:
             employee = Employee.objects.get(
-                biometric_id=biometric_id,
+                unique_code=code,
                 is_active=True
             )
         except Employee.DoesNotExist:
-            return Response({"error": "Empreinte non reconnue"}, status=404)
+            return Response({"error": "QR Code non reconnu"}, status=404)
 
         now = timezone.localtime()
         today = now.date()
@@ -36,10 +37,7 @@ class CheckInView(APIView):
             attendance.status = "present"
             attendance.minutes_late = 0
         else:
-            diff = (
-                timezone.datetime.combine(today, current_time) -
-                timezone.datetime.combine(today, work_start)
-            )
+            diff = datetime.combine(today, current_time) - datetime.combine(today, work_start)
             attendance.minutes_late = int(diff.total_seconds() // 60)
             attendance.status = "retard"
 
@@ -49,10 +47,10 @@ class CheckInView(APIView):
 
 class CheckOutView(APIView):
     def post(self, request):
-        employee_id = request.data.get('employee_id')
+        code = request.data.get("unique_code")  # <-- Même logique QR/UUID
 
         try:
-            employee = Employee.objects.get(id=employee_id)
+            employee = Employee.objects.get(unique_code=code)
         except Employee.DoesNotExist:
             return Response({"error": "Employee not found"}, status=404)
 
@@ -66,10 +64,9 @@ class CheckOutView(APIView):
         current_time = timezone.localtime().time()
         attendance.check_out = current_time
 
-        # Heure de sortie selon le poste
         work_end = employee.work_end_time
         if current_time < work_end:
-            attendance.status = 'depart_anticipe'  # départ anticipé
+            attendance.status = 'depart_anticipe'
 
         attendance.save()
 
